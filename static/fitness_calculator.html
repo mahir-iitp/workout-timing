@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Workout Duration Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Header styles */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Main content styles */
+        main {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 30px;
+        }
+
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            padding-right: 20px;
+        }
+
+        .result-section {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-left: 20px;
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .predict-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .predict-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Result styles */
+        .result-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            display: none;
+        }
+
+        .result-card.active {
+            display: block;
+        }
+
+        .result-card h2 {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .prediction {
+            margin: 20px 0;
+        }
+
+        .prediction-value {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .prediction-unit {
+            font-size: 1.5rem;
+            color: #764ba2;
+            margin-left: 5px;
+        }
+
+        .prediction-text {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .error-message {
+            background-color: #fff5f5;
+            border-left: 4px solid #f56565;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            width: 100%;
+            display: none;
+        }
+
+        /* Footer styles */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+            }
+            
+            .input-section, .result-section {
+                padding: 0;
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fitness Workout Duration Calculator</h1>
+            <p>Enter your details to calculate the optimal workout duration</p>
+        </header>
+
+        <main>
+            <section class="input-section">
+                <form id="fitness-form">
+                    <div class="form-group">
+                        <label for="age">Age:</label>
+                        <input type="number" id="age" name="age" required min="15" max="90">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">Gender:</label>
+                        <select id="gender" name="gender" required>
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="height">Height (cm):</label>
+                        <input type="number" id="height" name="height" required min="120" max="220">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weight">Weight (kg):</label>
+                        <input type="number" id="weight" name="weight" required min="30" max="200">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="workout_type">Workout Type:</label>
+                        <select id="workout_type" name="workout_type" required>
+                            <option value="" disabled selected>Select Workout Type</option>
+                            <option value="Cardio">Cardio</option>
+                            <option value="Strength">Strength</option>
+                            <option value="HIIT">HIIT</option>
+                            <option value="Cycling">Cycling</option>
+                            <option value="Yoga">Yoga</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" class="predict-btn" onclick="calculateDuration()">Calculate Workout Duration</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="result-section">
+                <div id="result-card" class="result-card">
+                    <h2>Calculation Result</h2>
+                    <div class="prediction">
+                        <span id="prediction-value" class="prediction-value">0</span>
+                        <span class="prediction-unit">minutes</span>
+                    </div>
+                    <p class="prediction-text">is the recommended workout duration based on your profile.</p>
+                </div>
+
+                <div id="error-message" class="error-message">
+                    <p id="error-text">Error: Please check your inputs and try again.</p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Fitness Workout Duration Calculator | Based on Machine Learning</p>
+        </footer>
+    </div>
+
+    <script>
+        // Sample data from the dataset
+        const sampleData = [
+            { age: 39, gender: "Male", height: 175, weight: 99, workoutType: "Cycling", duration: 79 },
+            { age: 36, gender: "Other", height: 157, weight: 112, workoutType: "Cardio", duration: 73 },
+            { age: 25, gender: "Female", height: 180, weight: 66, workoutType: "HIIT", duration: 27 },
+            { age: 56, gender: "Male", height: 154, weight: 89, workoutType: "Cycling", duration: 39 },
+            { age: 53, gender: "Other", height: 194, weight: 59, workoutType: "Strength", duration: 56 },
+            { age: 42, gender: "Female", height: 165, weight: 72, workoutType: "Yoga", duration: 60 },
+            { age: 29, gender: "Male", height: 182, weight: 85, workoutType: "HIIT", duration: 35 },
+            { age: 48, gender: "Female", height: 160, weight: 65, workoutType: "Cardio", duration: 45 },
+            { age: 33, gender: "Other", height: 175, weight: 78, workoutType: "Strength", duration: 65 },
+            { age: 51, gender: "Male", height: 178, weight: 92, workoutType: "Cycling", duration: 50 },
+            { age: 27, gender: "Female", height: 168, weight: 58, workoutType: "Yoga", duration: 75 },
+            { age: 44, gender: "Male", height: 183, weight: 88, workoutType: "HIIT", duration: 30 },
+            { age: 38, gender: "Female", height: 163, weight: 63, workoutType: "Cardio", duration: 55 },
+            { age: 55, gender: "Other", height: 170, weight: 75, workoutType: "Strength", duration: 60 },
+            { age: 31, gender: "Male", height: 179, weight: 83, workoutType: "Cycling", duration: 65 },
+            { age: 46, gender: "Female", height: 162, weight: 67, workoutType: "Yoga", duration: 80 },
+            { age: 29, gender: "Other", height: 176, weight: 72, workoutType: "HIIT", duration: 25 },
+            { age: 52, gender: "Male", height: 174, weight: 90, workoutType: "Cardio", duration: 40 },
+            { age: 35, gender: "Female", height: 167, weight: 61, workoutType: "Strength", duration: 70 },
+            { age: 49, gender: "Male", height: 180, weight: 86, workoutType: "Cycling", duration: 55 },
+            { age: 32, gender: "Other", height: 173, weight: 70, workoutType: "Yoga", duration: 65 },
+            { age: 41, gender: "Female", height: 164, weight: 64, workoutType: "HIIT", duration: 30 },
+            { age: 37, gender: "Male", height: 181, weight: 87, workoutType: "Cardio", duration: 50 },
+            { age: 54, gender: "Female", height: 159, weight: 62, workoutType: "Strength", duration: 65 },
+            { age: 28, gender: "Other", height: 177, weight: 73, workoutType: "Cycling", duration: 60 },
+            { age: 47, gender: "Male", height: 175, weight: 91, workoutType: "Yoga", duration: 70 },
+            { age: 34, gender: "Female", height: 166, weight: 60, workoutType: "HIIT", duration: 25 },
+            { age: 50, gender: "Other", height: 172, weight: 76, workoutType: "Cardio", duration: 45 },
+            { age: 30, gender: "Male", height: 184, weight: 84, workoutType: "Strength", duration: 75 },
+            { age: 45, gender: "Female", height: 161, weight: 66, workoutType: "Cycling", duration: 50 }
+        ];
+
+        function calculateDuration() {
+            // Get form values
+            const age = parseInt(document.getElementById('age').value);
+            const gender = document.getElementById('gender').value;
+            const height = parseInt(document.getElementById('height').value);
+            const weight = parseInt(document.getElementById('weight').value);
+            const workoutType = document.getElementById('workout_type').value;
+            
+            // Validate inputs
+            if (!age || !gender || !height || !weight || !workoutType) {
+                showError("Please fill in all fields");
+                return;
+            }
+            
+            try {
+                // Find similar profiles in our sample data
+                const similarProfiles = findSimilarProfiles(age, gender, height, weight, workoutType);
+                
+                // Calculate the average duration from similar profiles
+                const recommendedDuration = calculateAverageDuration(similarProfiles);
+                
+                // Display the result
+                showResult(recommendedDuration);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        function findSimilarProfiles(age, gender, height, weight, workoutType) {
+            // First, try to find exact workout type matches
+            let matches = sampleData.filter(profile => profile.workoutType === workoutType);
+            
+            // If we have at least 3 matches, use those
+            if (matches.length >= 3) {
+                return matches;
+            }
+            
+            // Otherwise, try to find gender matches
+            matches = sampleData.filter(profile => profile.gender === gender);
+            
+            // If still not enough, use age range
+            if (matches.length < 3) {
+                const ageRange = 10;
+                matches = sampleData.filter(profile => 
+                    Math.abs(profile.age - age) <= ageRange
+                );
+            }
+            
+            // If still not enough, return all data
+            return matches.length >= 3 ? matches : sampleData;
+        }
+        
+        function calculateAverageDuration(profiles) {
+            // Calculate the average duration
+            const sum = profiles.reduce((total, profile) => total + profile.duration, 0);
+            return Math.round(sum / profiles.length);
+        }
+        
+        function showResult(duration) {
+            // Hide error message if visible
+            document.getElementById('error-message').style.display = 'none';
+            
+            // Update and show result
+            document.getElementById('prediction-value').textContent = duration;
+            document.getElementById('result-card').classList.add('active');
+        }
+        
+        function showError(message) {
+            // Hide result if visible
+            document.getElementById('result-card').classList.remove('active');
+            
+            // Update and show error
+            document.getElementById('error-text').textContent = `Error: ${message}`;
+            document.getElementById('error-message').style.display = 'block';
+        }
+    </script>
+</body>
+</html> 
