@@ -105,4 +105,4 @@ if __name__ == '__main__':
     # In production, debug should be False
     debug = os.environ.get('FLASK_ENV') == 'development'
     
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=debug)
